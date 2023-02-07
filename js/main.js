@@ -319,11 +319,6 @@ Vue.component('column1', {
             <div class="card_time">{{card.time}}</div>
             <div class="card_date">{{card.date}}</div>
         </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
         <div v-if="card.editTime" class="card_data_edit">
             <p>edit:</p>
             <div class="card_edit_time">{{card.editTime}}</div>
@@ -332,6 +327,11 @@ Vue.component('column1', {
         <div v-if="card.reason" class="card_reason">
             <p>reason:</p>
             <div class="card_reason">{{card.reason}}</div>
+        </div>
+        <div class="card_deadline">
+            <p>deadline:</p>
+            <div class="card_deadline_time">{{card.deadlineTime}}</div>
+            <div class="card_deadline_data">{{card.deadlineDate}}</div>
         </div>
         <div class="move">
             <button @click="nextColumn(index, id)">&#5125</button>
@@ -379,11 +379,6 @@ Vue.component('column2', {
             <div class="card_time">{{card.time}}</div>
             <div class="card_date">{{card.date}}</div>
         </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
         <div v-if="card.editTime" class="card_data_edit">
             <p>edit:</p>
             <div class="card_edit_time">{{card.editTime}}</div>
@@ -392,6 +387,11 @@ Vue.component('column2', {
         <div v-if="card.reason" class="card_reason">
             <p>reason:</p>
             <div class="card_reason">{{card.reason}}</div>
+        </div>
+        <div class="card_deadline">
+            <p>deadline:</p>
+            <div class="card_deadline_time">{{card.deadlineTime}}</div>
+            <div class="card_deadline_data">{{card.deadlineDate}}</div>
         </div>
         <div class="move">
             <button @click="nextColumn(index, id)">&#5125</button>
@@ -441,11 +441,6 @@ Vue.component('column3', {
             <div class="card_time">{{card.time}}</div>
             <div class="card_date">{{card.date}}</div>
         </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
         <div v-if="card.editTime" class="card_data_edit">
             <p>edit:</p>
             <div class="card_edit_time">{{card.editTime}}</div>
@@ -454,6 +449,11 @@ Vue.component('column3', {
         <div v-if="card.reason" class="card_reason">
             <p>reason:</p>
             <div class="card_reason">{{card.reason}}</div>
+        </div>
+        <div class="card_deadline">
+            <p>deadline:</p>
+            <div class="card_deadline_time">{{card.deadlineTime}}</div>
+            <div class="card_deadline_data">{{card.deadlineDate}}</div>
         </div>
         <div class="move">
             <button @click="previousColumn(index, id)">&#5130</button>
@@ -494,11 +494,6 @@ Vue.component('column4', {
             <div class="card_time">{{card.time}}</div>
             <div class="card_date">{{card.date}}</div>
         </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
         <div v-if="card.reason" class="card_reason">
             <p>reason:</p>
             <div class="card_reason">{{card.reason}}</div>
@@ -507,6 +502,11 @@ Vue.component('column4', {
             <p>edit:</p>
             <div class="card_edit_time">{{card.editTime}}</div>
             <div class="card_edit_data">{{card.editDate}}</div>
+        </div>
+        <div class="card_deadline">
+            <p>deadline:</p>
+            <div class="card_deadline_time">{{card.deadlineTime}}</div>
+            <div class="card_deadline_data">{{card.deadlineDate}}</div>
         </div>
 
     </div>
