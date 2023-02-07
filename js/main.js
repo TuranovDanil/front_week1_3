@@ -23,38 +23,13 @@ Vue.component('container', {
         eventBus.$on('card-submitted', createdCard => {
             this.column1.push(createdCard)
         })
-    }
-})
-
-
-
-Vue.component('column1', {
-    props: {
-        column1: {
-            type: Array,
-            required: true
-        }
+        eventBus.$on('del-card', index => {
+            this.column1.splice(index, 1)
+        })
     },
-    template: `
-<div>
-    <div v-for="card in column1">
-        <div class="card_title_block">
-            <h2 class="card_title">{{card.title}}</h2>
-            <button>X</button>
-        </div>
-        <div class="card_data_create">
-            <div class="card_time">{{card.time}}</div>
-            <div class="card_data">{{card.data}}</div>
-        </div>
-        <div class="card_description">{{card.description}}</div>
-        <div class="card_deadline">
-            <div class="card_deadline_time">{{card.deadline.time}}</div>
-            <div class="card_deadline_data">{{card.deadline.data}}</div>
-        </div>
+    methods:{
 
-    </div>
-</div>
-    `
+    }
 })
 
 Vue.component('create-card', {
@@ -65,34 +40,32 @@ Vue.component('create-card', {
             date: null,
             title: null,
             description: null,
-            deadline: {
-                time: null,
-                date: null
-            },
+            deadlineTime: null,
+            deadlineDate: null,
+
+
 
         }
     },
     methods: {
         onSubmit() {
-            if (this.title && this.description && this.deadline.time && this.deadline.date) {
+            if (this.title && this.description && this.deadlineTime && this.deadlineDate) {
                 let Data = new Date()
                 let createdCard = {
                     time: Data.getHours() + ':' + Data.getMinutes(),
-                    date: Data.getDate() + ':' + Data.getMonth() + ':' + Data.getFullYear(),
+                    date: Data.getFullYear() + '-' + Data.getMonth() + '-' + Data.getDate(),
                     title: this.title,
                     description: this.description,
-                    deadline: {
-                        time: this.time,
-                        date: this.date
-                    }
+                    deadlineTime: this.deadlineTime,
+                    deadlineDate: this.deadlineDate,
                 }
                 eventBus.$emit('card-submitted', createdCard);
                 this.time = null
                 this.date = null
                 this.title = null
                 this.description = null
-                this.deadline.time = null
-                this.deadline.date = null
+                this.deadlineTime = null
+                this.deadlineDate = null
             }
         }
     },
@@ -108,11 +81,11 @@ Vue.component('create-card', {
     </p>
     <p>
         <label for="time">Time:</label>
-        <input id="time" type="time" v-model="deadline.time" placeholder="time">
+        <input id="time" type="time" v-model="deadlineTime" placeholder="time">
     </p>
     <p>
         <label for="date">Date:</label>
-        <input id="date" type="date" v-model="deadline.date" placeholder="date">
+        <input id="date" type="date" v-model="deadlineDate" placeholder="date">
     </p>
     <p>
         <input type="submit" value="Submit"> 
@@ -120,6 +93,42 @@ Vue.component('create-card', {
 </form>
     `
 })
+
+
+Vue.component('column1', {
+    props: {
+        column1: {
+            type: Array,
+            required: true
+        }
+    },
+    methods:{
+      delCard(index){
+          eventBus.$emit('del-card', index);
+      }
+    },
+    template: `
+<div>
+    <div v-for="(card, index) in column1" :key="index">
+        <div class="card_title_block">
+            <h2 class="card_title">{{card.title}}</h2>
+            <button @click="delCard(index)">X</button>
+        </div>
+        <div class="card_data_create">
+            <div class="card_time">{{card.time}}</div>
+            <div class="card_data">{{card.data}}</div>
+        </div>
+        <div class="card_description">{{card.description}}</div>
+        <div class="card_deadline">
+            <div class="card_deadline_time">{{card.deadlineTime}}</div>
+            <div class="card_deadline_data">{{card.deadlineDate}}</div>
+        </div>
+
+    </div>
+</div>
+    `
+})
+
 
 Vue.component('column2', {
     props: {
