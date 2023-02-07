@@ -114,7 +114,7 @@ Vue.component('container', {
             console.log(date, time)
             console.log(Data.getFullYear(),Data.getMonth()+1,Data.getDate(),Data.getHours(),Data.getMinutes())
             if (Data.getFullYear() > date[0]) return false;
-            else if (Data.getMonth()+1 > date[1]) return false;
+            else if (Data.getMonth() > date[1]) return false;
             else if (Data.getDate() > date[2]) return false;
             else if (Data.getHours() > time[0]) return false;
             else if (Data.getMinutes() > time[1]) return false;
@@ -292,56 +292,36 @@ Vue.component('column1', {
         }
     },
     methods: {
-        delCard(index) {
-            eventBus.$emit('del-card', index);
-        },
-        editCard(index, id) {
-            eventBus.$emit('edit-card', index, id)
-        },
-        nextColumn(index, id) {
-            eventBus.$emit('next-column', index, id)
-        }
     },
     template: `
 <div>
-    <div v-for="(card, index) in column" :key="index" class="card">
-        <div class="card_title_block">
-            <h2 class="card_title">{{card.title}}</h2>
-            <button @click="delCard(index)">delete</button>
-            <button @click="editCard(index, id)">edit</button>
-        </div>
-        <div class="card_description"> 
-            <p>description:</p>
-            {{card.description}}
-        </div>
-        <div class="card_data_create">
-            <p>created:</p>
-            <div class="card_time">{{card.time}}</div>
-            <div class="card_date">{{card.date}}</div>
-        </div>
-        <div v-if="card.editTime" class="card_data_edit">
-            <p>edit:</p>
-            <div class="card_edit_time">{{card.editTime}}</div>
-            <div class="card_edit_data">{{card.editDate}}</div>
-        </div>
-        <div v-if="card.reason" class="card_reason">
-            <p>reason:</p>
-            <div class="card_reason">{{card.reason}}</div>
-        </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
-        <div class="move">
-            <button @click="nextColumn(index, id)">&#5125</button>
-        </div>
-
-    </div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
+</card>
 </div>
     `
 })
 
+Vue.component('column1', {
+    props: {
+        column: {
+            type: Array,
+            required: true
+        }
+    },
+    data() {
+        return {
+            id: 1
+        }
+    },
+    methods: {
+    },
+    template: `
+<div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
+</card>
+</div>
+    `
+})
 
 Vue.component('column2', {
     props: {
@@ -356,48 +336,11 @@ Vue.component('column2', {
         }
     },
     methods: {
-        editCard(index, id) {
-            eventBus.$emit('edit-card', index, id)
-        },
-        nextColumn(index, id) {
-            eventBus.$emit('next-column', index, id)
-        }
     },
     template: `
 <div>
-    <div v-for="(card, index) in column" :key="index" class="card">
-        <div class="card_title_block">
-            <h2 class="card_title">{{card.title}}</h2>
-            <button @click="editCard(index, id)">edit</button>
-        </div>
-        <div class="card_description"> 
-            <p>description:</p>
-            {{card.description}}
-        </div>
-        <div class="card_data_create">
-            <p>created:</p>
-            <div class="card_time">{{card.time}}</div>
-            <div class="card_date">{{card.date}}</div>
-        </div>
-        <div v-if="card.editTime" class="card_data_edit">
-            <p>edit:</p>
-            <div class="card_edit_time">{{card.editTime}}</div>
-            <div class="card_edit_data">{{card.editDate}}</div>
-        </div>
-        <div v-if="card.reason" class="card_reason">
-            <p>reason:</p>
-            <div class="card_reason">{{card.reason}}</div>
-        </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
-        <div class="move">
-            <button @click="nextColumn(index, id)">&#5125</button>
-        </div>
-
-    </div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
+</card>
 </div>
     `
 })
@@ -411,63 +354,18 @@ Vue.component('column3', {
     },
     data() {
         return {
-            id: 3,
+            id: 3
         }
     },
     methods: {
-        editCard(index, id) {
-            eventBus.$emit('edit-card', index, id)
-        },
-        previousColumn(index, id) {
-            eventBus.$emit('previous-column', index, id)
-        },
-        nextColumn(index, id) {
-            eventBus.$emit('next-column', index, id)
-        }
     },
     template: `
 <div>
-    <div v-for="(card, index) in column" :key="index" class="card">
-        <div class="card_title_block">
-            <h2 class="card_title">{{card.title}}</h2>
-            <button @click="editCard(index, id)">edit</button>
-        </div>
-        <div class="card_description"> 
-            <p>description:</p>
-            {{card.description}}
-        </div>
-        <div class="card_data_create">
-            <p>created:</p>
-            <div class="card_time">{{card.time}}</div>
-            <div class="card_date">{{card.date}}</div>
-        </div>
-        <div v-if="card.editTime" class="card_data_edit">
-            <p>edit:</p>
-            <div class="card_edit_time">{{card.editTime}}</div>
-            <div class="card_edit_data">{{card.editDate}}</div>
-        </div>
-        <div v-if="card.reason" class="card_reason">
-            <p>reason:</p>
-            <div class="card_reason">{{card.reason}}</div>
-        </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
-        <div class="move">
-            <div class="left_arrow">
-                <button @click="previousColumn(index, id)">&#5130</button>
-            </div>
-            <div class="right_arrow">
-                <button @click="nextColumn(index, id)">&#5125</button>
-            </div>
-        </div>
-    </div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
+</card>
 </div>
     `
 })
-
 
 Vue.component('column4', {
     props: {
@@ -481,12 +379,51 @@ Vue.component('column4', {
             id: 4
         }
     },
-    methods: {},
+    methods: {
+    },
     template: `
 <div>
-    <div v-for="(card, index) in column" :key="index" :class="{completed: card.completed, nocompleted: !card.completed}" class="card" >
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
+</card>
+</div>
+    `
+})
+
+Vue.component('card',{
+    props:{
+        card:{
+            type: Object,
+            required: true
+        },
+        id:{
+            type: Number,
+            required: true
+        },
+        index:{
+            type: Number,
+            required: true
+        }
+    },
+    methods: {
+        delCard(index) {
+            eventBus.$emit('del-card', index);
+        },
+        editCard(index, id) {
+            eventBus.$emit('edit-card', index, id)
+        },
+        previousColumn(index, id) {
+            eventBus.$emit('previous-column', index, id)
+        },
+        nextColumn(index, id) {
+            eventBus.$emit('next-column', index, id)
+        }
+    },
+    template: `
+<div :key="index" :class="{completed: card.completed, nocompleted: card.completed == false}">
         <div class="card_title_block">
             <h2 class="card_title">{{card.title}}</h2>
+            <button v-if="id === 1" @click="delCard(index)">delete</button>
+            <button v-if="id !== 4" @click="editCard(index, id)">edit</button>
         </div>
         <div class="card_description"> 
             <p>description:</p>
@@ -497,25 +434,213 @@ Vue.component('column4', {
             <div class="card_time">{{card.time}}</div>
             <div class="card_date">{{card.date}}</div>
         </div>
-        <div v-if="card.reason" class="card_reason">
-            <p>reason:</p>
-            <div class="card_reason">{{card.reason}}</div>
-        </div>
         <div v-if="card.editTime" class="card_data_edit">
             <p>edit:</p>
             <div class="card_edit_time">{{card.editTime}}</div>
             <div class="card_edit_data">{{card.editDate}}</div>
+        </div>
+        <div v-if="card.reason" class="card_reason">
+            <p>reason:</p>
+            <div class="card_reason">{{card.reason}}</div>
         </div>
         <div class="card_deadline">
             <p>deadline:</p>
             <div class="card_deadline_time">{{card.deadlineTime}}</div>
             <div class="card_deadline_data">{{card.deadlineDate}}</div>
         </div>
-
-    </div>
+        <div v-if="id !==4" class="move">
+            <div v-if="id ===3" class="left_arrow">
+                <button @click="previousColumn(index, id)">&#5130</button>
+            </div>
+            <div class="right_arrow">
+                <button @click="nextColumn(index, id)">&#5125</button>
+            </div>
+        </div>
 </div>
     `
 })
+
+// Vue.component('column2', {
+//     props: {
+//         column: {
+//             type: Array,
+//             required: true
+//         }
+//     },
+//     data() {
+//         return {
+//             id: 2
+//         }
+//     },
+//     methods: {
+//         editCard(index, id) {
+//             eventBus.$emit('edit-card', index, id)
+//         },
+//         previousColumn(index, id) {
+//             eventBus.$emit('previous-column', index, id)
+//         },
+//         nextColumn(index, id) {
+//             eventBus.$emit('next-column', index, id)
+//         }
+//     },
+//     template: `
+// <div>
+//     <div v-for="(card, index) in column" :key="index" class="card">
+//         <div class="card_title_block">
+//             <h2 class="card_title">{{card.title}}</h2>
+//             <button @click="editCard(index, id)">edit</button>
+//         </div>
+//         <div class="card_description">
+//             <p>description:</p>
+//             {{card.description}}
+//         </div>
+//         <div class="card_data_create">
+//             <p>created:</p>
+//             <div class="card_time">{{card.time}}</div>
+//             <div class="card_date">{{card.date}}</div>
+//         </div>
+//         <div v-if="card.editTime" class="card_data_edit">
+//             <p>edit:</p>
+//             <div class="card_edit_time">{{card.editTime}}</div>
+//             <div class="card_edit_data">{{card.editDate}}</div>
+//         </div>
+//         <div v-if="card.reason" class="card_reason">
+//             <p>reason:</p>
+//             <div class="card_reason">{{card.reason}}</div>
+//         </div>
+//         <div class="card_deadline">
+//             <p>deadline:</p>
+//             <div class="card_deadline_time">{{card.deadlineTime}}</div>
+//             <div class="card_deadline_data">{{card.deadlineDate}}</div>
+//         </div>
+//         <div class="move">
+//             <div class="left_arrow">
+//                 <button @click="previousColumn(index, id)">&#5130</button>
+//             </div>
+//             <div class="right_arrow">
+//                 <button @click="nextColumn(index, id)">&#5125</button>
+//             </div>
+//         </div>
+//
+//     </div>
+// </div>
+//     `
+// })
+//
+// Vue.component('column3', {
+//     props: {
+//         column: {
+//             type: Array,
+//             required: true
+//         }
+//     },
+//     data() {
+//         return {
+//             id: 3,
+//         }
+//     },
+//     methods: {
+//         editCard(index, id) {
+//             eventBus.$emit('edit-card', index, id)
+//         },
+//         previousColumn(index, id) {
+//             eventBus.$emit('previous-column', index, id)
+//         },
+//         nextColumn(index, id) {
+//             eventBus.$emit('next-column', index, id)
+//         }
+//     },
+//     template: `
+// <div>
+//     <div v-for="(card, index) in column" :key="index" class="card">
+//         <div class="card_title_block">
+//             <h2 class="card_title">{{card.title}}</h2>
+//             <button @click="editCard(index, id)">edit</button>
+//         </div>
+//         <div class="card_description">
+//             <p>description:</p>
+//             {{card.description}}
+//         </div>
+//         <div class="card_data_create">
+//             <p>created:</p>
+//             <div class="card_time">{{card.time}}</div>
+//             <div class="card_date">{{card.date}}</div>
+//         </div>
+//         <div v-if="card.editTime" class="card_data_edit">
+//             <p>edit:</p>
+//             <div class="card_edit_time">{{card.editTime}}</div>
+//             <div class="card_edit_data">{{card.editDate}}</div>
+//         </div>
+//         <div v-if="card.reason" class="card_reason">
+//             <p>reason:</p>
+//             <div class="card_reason">{{card.reason}}</div>
+//         </div>
+//         <div class="card_deadline">
+//             <p>deadline:</p>
+//             <div class="card_deadline_time">{{card.deadlineTime}}</div>
+//             <div class="card_deadline_data">{{card.deadlineDate}}</div>
+//         </div>
+//         <div class="move">
+//             <div class="left_arrow">
+//                 <button @click="previousColumn(index, id)">&#5130</button>
+//             </div>
+//             <div class="right_arrow">
+//                 <button @click="nextColumn(index, id)">&#5125</button>
+//             </div>
+//         </div>
+//     </div>
+// </div>
+//     `
+// })
+//
+//
+// Vue.component('column4', {
+//     props: {
+//         column: {
+//             type: Array,
+//             required: true
+//         }
+//     },
+//     data() {
+//         return {
+//             id: 4
+//         }
+//     },
+//     methods: {},
+//     template: `
+// <div>
+//     <div v-for="(card, index) in column" :key="index" :class="{completed: card.completed, nocompleted: !card.completed}" class="card" >
+//         <div class="card_title_block">
+//             <h2 class="card_title">{{card.title}}</h2>
+//         </div>
+//         <div class="card_description">
+//             <p>description:</p>
+//             {{card.description}}
+//         </div>
+//         <div class="card_data_create">
+//             <p>created:</p>
+//             <div class="card_time">{{card.time}}</div>
+//             <div class="card_date">{{card.date}}</div>
+//         </div>
+//         <div v-if="card.reason" class="card_reason">
+//             <p>reason:</p>
+//             <div class="card_reason">{{card.reason}}</div>
+//         </div>
+//         <div v-if="card.editTime" class="card_data_edit">
+//             <p>edit:</p>
+//             <div class="card_edit_time">{{card.editTime}}</div>
+//             <div class="card_edit_data">{{card.editDate}}</div>
+//         </div>
+//         <div class="card_deadline">
+//             <p>deadline:</p>
+//             <div class="card_deadline_time">{{card.deadlineTime}}</div>
+//             <div class="card_deadline_data">{{card.deadlineDate}}</div>
+//         </div>
+//
+//     </div>
+// </div>
+//     `
+// })
 
 Vue.component('note', {})
 
