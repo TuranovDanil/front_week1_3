@@ -456,8 +456,12 @@ Vue.component('column3', {
             <div class="card_deadline_data">{{card.deadlineDate}}</div>
         </div>
         <div class="move">
-            <button @click="previousColumn(index, id)">&#5130</button>
-            <button @click="nextColumn(index, id)">&#5125</button>
+            <div class="left_arrow">
+                <button @click="previousColumn(index, id)">&#5130</button>
+            </div>
+            <div class="right_arrow">
+                <button @click="nextColumn(index, id)">&#5125</button>
+            </div>
         </div>
     </div>
 </div>
@@ -483,7 +487,6 @@ Vue.component('column4', {
     <div v-for="(card, index) in column" :key="index" :class="{completed: card.completed, nocompleted: !card.completed}" class="card" >
         <div class="card_title_block">
             <h2 class="card_title">{{card.title}}</h2>
-            <button @click="editCard(index, id)">edit</button>
         </div>
         <div class="card_description"> 
             <p>description:</p>

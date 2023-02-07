@@ -88,3 +88,9 @@
 .nocompleted > div{
     border: 1px solid red;
 }
+
+.move{
+    display: flex;
+    justify-content: space-between;
+}
+
