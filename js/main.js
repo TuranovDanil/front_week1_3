@@ -52,6 +52,14 @@ Vue.component('container', {
                     if (editCard.editTime) this.column1[index].editTime = editCard.editTime;
                     if (editCard.editDate) this.column1[index].editDate = editCard.editDate;
                 }
+                else if(id === 2){
+                    if (editCard.title) this.column2[index].title = editCard.title;
+                    if (editCard.description) this.column2[index].description = editCard.description;
+                    if (editCard.deadlineTime) this.column2[index].deadlineTime = editCard.deadlineTime;
+                    if (editCard.deadlineDate) this.column2[index].deadlineDate = editCard.deadlineDate;
+                    if (editCard.editTime) this.column2[index].editTime = editCard.editTime;
+                    if (editCard.editDate) this.column2[index].editDate = editCard.editDate;
+                }
                 this.isEdit = false;
                 this.save();
             })
