@@ -8,18 +8,19 @@ Vue.component('container', {
             column3: [],
             column4: [],
             isEdit: false,
-
+            isReason: false,
         }
     },
     template: `
 <div>
-    <create-card v-if="!isEdit"></create-card>
+    <create-card v-if="!isEdit && !isReason"></create-card>
     <edit v-if="isEdit"></edit>
+    <reason v-if="isReason"></reason>
     <div class="container">
-        <column1 class="column column1" :column="column1" v-if="!isEdit"></column1>
-        <column2 class="column column2" :column="column2" v-if="!isEdit"></column2>
-        <column3 class="column column3" :column="column3" v-if="!isEdit"></column3>     
-        <column4 class="column column4" :column="column4" v-if="!isEdit"></column4>            
+        <column1 class="column column1" :column="column1" v-if="!isEdit && !isReason"></column1>
+        <column2 class="column column2" :column="column2" v-if="!isEdit && !isReason"></column2>
+        <column3 class="column column3" :column="column3" v-if="!isEdit && !isReason"></column3>     
+        <column4 class="column column4" :column="column4" v-if="!isEdit && !isReason"></column4>            
     </div>
 </div>
     `,
@@ -41,26 +42,24 @@ Vue.component('container', {
             this.column1.splice(index, 1);
             this.save();
         })
-        eventBus.$on('edit-card', (index, id) =>{
+        eventBus.$on('edit-card', (index, id) => {
             this.isEdit = true;
-            eventBus.$on('edit-submitted', editCard =>{
-                if(id === 1){
+            eventBus.$on('edit-submitted', editCard => {
+                if (id === 1) {
                     if (editCard.title) this.column1[index].title = editCard.title;
                     if (editCard.description) this.column1[index].description = editCard.description;
                     if (editCard.deadlineTime) this.column1[index].deadlineTime = editCard.deadlineTime;
                     if (editCard.deadlineDate) this.column1[index].deadlineDate = editCard.deadlineDate;
                     if (editCard.editTime) this.column1[index].editTime = editCard.editTime;
                     if (editCard.editDate) this.column1[index].editDate = editCard.editDate;
-                }
-                else if(id === 2){
+                } else if (id === 2) {
                     if (editCard.title) this.column2[index].title = editCard.title;
                     if (editCard.description) this.column2[index].description = editCard.description;
                     if (editCard.deadlineTime) this.column2[index].deadlineTime = editCard.deadlineTime;
                     if (editCard.deadlineDate) this.column2[index].deadlineDate = editCard.deadlineDate;
                     if (editCard.editTime) this.column2[index].editTime = editCard.editTime;
                     if (editCard.editDate) this.column2[index].editDate = editCard.editDate;
-                }
-                else {
+                } else {
                     if (editCard.title) this.column3[index].title = editCard.title;
                     if (editCard.description) this.column3[index].description = editCard.description;
                     if (editCard.deadlineTime) this.column3[index].deadlineTime = editCard.deadlineTime;
@@ -72,16 +71,25 @@ Vue.component('container', {
                 this.save();
             })
         })
-        eventBus.$on('next-column', (index, id) =>{
-            if (id === 1){
+        eventBus.$on('next-column', (index, id) => {
+            if (id === 1) {
                 this.column2.push(this.column1[index]);
                 this.column1.splice(index, 1)
-            }
-            else if (id === 2){
+            } else if (id === 2) {
                 this.column3.push(this.column2[index]);
                 this.column2.splice(index, 1)
             }
             this.save();
+        })
+        eventBus.$on('previous-column', (index, id) => {
+                this.isReason = true;
+                eventBus.$on('reason-submitted', reason => {
+                    this.column3[index].reason = reason.reason;
+                    this.column2.unshift(this.column3[index]);
+                    this.column3.splice(index, 1);
+                    this.isReason = false;
+                    this.save();
+                });
         })
     },
     methods: {
@@ -91,6 +99,37 @@ Vue.component('container', {
             localStorage.todo3 = JSON.stringify(this.column3);
         },
     }
+})
+
+Vue.component('reason', {
+    data() {
+        return {
+            reason: null
+        }
+    },
+    methods: {
+        onSubmit() {
+            if (this.reason) {
+                let reason = {
+                    reason: this.reason
+                }
+                eventBus.$emit('reason-submitted', reason);
+            }
+            this.reason = null
+        }
+    },
+    template: `
+<form class="reason-form" @submit.prevent="onSubmit">
+    <h2>Reason</h2>
+    <p>
+        <label for="reason">Reason:</label>
+        <input id="reason" v-model="reason" placeholder="reason">
+    </p>
+    <p>
+        <input type="submit" value="Save"> 
+    </p>
+</form>
+    `
 })
 
 Vue.component('edit', {
@@ -106,7 +145,7 @@ Vue.component('edit', {
     },
     methods: {
         onSubmit() {
-            if(this.title || this.description || this.deadlineTime || this.deadlineDate){
+            if (this.title || this.description || this.deadlineTime || this.deadlineDate) {
                 let Data = new Date()
                 let editCard = {
                     title: this.title,
@@ -118,9 +157,7 @@ Vue.component('edit', {
                 }
                 eventBus.$emit('edit-submitted', editCard);
             } else {
-                let editCard = {
-
-                }
+                let editCard = {}
                 eventBus.$emit('edit-submitted', editCard);
             }
             this.title = null;
@@ -227,8 +264,8 @@ Vue.component('column1', {
             required: true
         }
     },
-    data(){
-        return{
+    data() {
+        return {
             id: 1
         }
     },
@@ -239,7 +276,7 @@ Vue.component('column1', {
         editCard(index, id) {
             eventBus.$emit('edit-card', index, id)
         },
-        nextColumn(index, id){
+        nextColumn(index, id) {
             eventBus.$emit('next-column', index, id)
         }
     },
@@ -270,8 +307,12 @@ Vue.component('column1', {
             <div class="card_edit_time">{{card.editTime}}</div>
             <div class="card_edit_data">{{card.editDate}}</div>
         </div>
+        <div v-if="card.reason" class="card_reason">
+            <p>reason:</p>
+            <div class="card_reason">{{card.reason}}</div>
+        </div>
         <div class="move">
-            <button @click="nextColumn(index, id)">&#10148</button>
+            <button @click="nextColumn(index, id)">&#5125</button>
         </div>
 
     </div>
@@ -287,8 +328,8 @@ Vue.component('column2', {
             required: true
         }
     },
-    data(){
-        return{
+    data() {
+        return {
             id: 2
         }
     },
@@ -296,7 +337,7 @@ Vue.component('column2', {
         editCard(index, id) {
             eventBus.$emit('edit-card', index, id)
         },
-        nextColumn(index, id){
+        nextColumn(index, id) {
             eventBus.$emit('next-column', index, id)
         }
     },
@@ -326,8 +367,12 @@ Vue.component('column2', {
             <div class="card_edit_time">{{card.editTime}}</div>
             <div class="card_edit_data">{{card.editDate}}</div>
         </div>
+        <div v-if="card.reason" class="card_reason">
+            <p>reason:</p>
+            <div class="card_reason">{{card.reason}}</div>
+        </div>
         <div class="move">
-            <button @click="nextColumn(index, id)">&#10148</button>
+            <button @click="nextColumn(index, id)">&#5125</button>
         </div>
 
     </div>
@@ -342,14 +387,17 @@ Vue.component('column3', {
             required: true
         }
     },
-    data(){
-        return{
-            id: 3
+    data() {
+        return {
+            id: 3,
         }
     },
     methods: {
         editCard(index, id) {
             eventBus.$emit('edit-card', index, id)
+        },
+        previousColumn(index, id) {
+            eventBus.$emit('previous-column', index, id)
         }
     },
     template: `
@@ -378,11 +426,19 @@ Vue.component('column3', {
             <div class="card_edit_time">{{card.editTime}}</div>
             <div class="card_edit_data">{{card.editDate}}</div>
         </div>
-
+        <div v-if="card.reason" class="card_reason">
+            <p>reason:</p>
+            <div class="card_reason">{{card.reason}}</div>
+        </div>
+        <div class="move">
+            <button @click="previousColumn(index, id)">&#5130</button>
+            <button @click="nextColumn(index, id)">&#5125</button>
+        </div>
     </div>
 </div>
     `
 })
+
 
 Vue.component('column4', {
     props: {
@@ -391,14 +447,12 @@ Vue.component('column4', {
             required: true
         }
     },
-    data(){
-        return{
+    data() {
+        return {
             id: 4
         }
     },
-    methods: {
-
-    },
+    methods: {},
     template: `
 <div>
     <div v-for="(card, index) in column" :key="index" class="card">
@@ -419,6 +473,10 @@ Vue.component('column4', {
             <p>deadline:</p>
             <div class="card_deadline_time">{{card.deadlineTime}}</div>
             <div class="card_deadline_data">{{card.deadlineDate}}</div>
+        </div>
+        <div v-if="card.reason" class="card_reason">
+            <p>reason:</p>
+            <div class="card_reason">{{card.reason}}</div>
         </div>
         <div v-if="card.editTime" class="card_data_edit">
             <p>edit:</p>

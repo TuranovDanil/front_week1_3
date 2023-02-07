@@ -65,3 +65,10 @@
     padding: 5px;
 }
 
+.reason-form {
+    margin: 200px;
+}
+
+.reason-form > p{
+    margin-top: 20px;
+}
