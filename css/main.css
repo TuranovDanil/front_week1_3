@@ -5,7 +5,7 @@
 
 .container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     justify-items: center;
     align-items: start;
     justify-content: space-evenly;
@@ -32,4 +32,35 @@
 
 .column3 {
     order: 3;
+}
+
+.column4 {
+    order: 3;
+}
+
+.edit-form{
+    margin: 200px;
+}
+
+.created-form{
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.created-form > p{
+    margin-top: 10px;
+}
+
+.edit-form > p{
+    margin-top: 20px;
+}
+
+.card{
+    min-width: 200px;
+    margin-bottom: 10px;
+}
+
+.card > div{
+    border: 1px solid blueviolet;
+    padding: 5px;
 }
