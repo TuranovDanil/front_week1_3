@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    align-items: start;
+    justify-content: space-evenly;
+    padding-top: 40px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: black 4px solid;
+    border-radius: 20px;
+    min-width: 100px;
+
+}
+
+.column1 {
+    order: 1;
+}
+
+.column2 {
+    order: 2;
+}
+
+.column3 {
+    order: 3;
+}
