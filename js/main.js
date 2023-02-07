@@ -19,16 +19,31 @@ Vue.component('container', {
     </div>
 </div>
     `,
-    mounted() {
+    mounted(){
+        if (localStorage.todo) {
+            this.column1 = JSON.parse(localStorage.todo)
+        }
+        if (localStorage.todo2) {
+            this.column2 = JSON.parse(localStorage.todo2)
+        }
+        if (localStorage.todo3) {
+            this.column3 = JSON.parse(localStorage.todo3)
+        }
         eventBus.$on('card-submitted', createdCard => {
             this.column1.push(createdCard)
+            this.save();
         })
         eventBus.$on('del-card', index => {
             this.column1.splice(index, 1)
+            this.save();
         })
     },
     methods:{
-
+        save() {
+            localStorage.todo = JSON.stringify(this.column1);
+            localStorage.todo2 = JSON.stringify(this.column2);
+            localStorage.todo3 = JSON.stringify(this.column3);
+        }
     }
 })
 
