@@ -69,6 +69,10 @@ Vue.component('container', {
                 this.column2.push(this.column1[index]);
                 this.column1.splice(index, 1)
             }
+            else if (id === 2){
+                this.column3.push(this.column2[index]);
+                this.column2.splice(index, 1)
+            }
             this.save();
         })
     },
@@ -283,6 +287,9 @@ Vue.component('column2', {
     methods: {
         editCard(index, id) {
             eventBus.$emit('edit-card', index, id)
+        },
+        nextColumn(index, id){
+            eventBus.$emit('next-column', index, id)
         }
     },
     template: `
@@ -310,6 +317,9 @@ Vue.component('column2', {
             <p>edit:</p>
             <div class="card_edit_time">{{card.editTime}}</div>
             <div class="card_edit_data">{{card.editDate}}</div>
+        </div>
+        <div class="move">
+            <button @click="nextColumn(index, id)">&#10148</button>
         </div>
 
     </div>
