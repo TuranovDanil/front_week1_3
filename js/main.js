@@ -107,18 +107,32 @@ Vue.component('container', {
             localStorage.todo3 = JSON.stringify(this.column3);
             localStorage.todo4 = JSON.stringify(this.column4);
         },
-        completed(index, id){
+        completed(index, id) {
             let Data = new Date();
             let date = this.column3[index].deadlineDate.split('-');
             let time = this.column3[index].deadlineTime.split(':');
             console.log(date, time)
-            console.log(Data.getFullYear(),Data.getMonth()+1,Data.getDate(),Data.getHours(),Data.getMinutes())
-            if (Data.getFullYear() > date[0]) return false;
-            else if (Data.getMonth() > date[1]) return false;
-            else if (Data.getDate() > date[2]) return false;
-            else if (Data.getHours() > time[0]) return false;
-            else if (Data.getMinutes() > time[1]) return false;
-            else return true;
+            console.log(Data.getFullYear(), Data.getMonth() + 1, Data.getDate(), Data.getHours(), Data.getMinutes())
+            console.log(Number(Data.getFullYear()) === Number(date[0]))
+
+            if (Data.getFullYear() > Number(date[0])) return false;
+            else if (Data.getFullYear() < Number(date[0])) return true;
+            else {
+                if (Number(Data.getMonth() + 1) > Number(date[1])) return false;
+                else if (Number(Data.getMonth() + 1) < Number(date[1])) return true;
+                else {
+                    if (Number(Data.getDate()) > Number(date[2])) return false;
+                    else if (Number(Data.getDate()) < Number(date[2])) return true;
+                    else {
+                        if (Number(Data.getHours()) > Number(time[0])) return false;
+                        else if (Number(Data.getHours()) < Number(time[0])) return true;
+                        else {
+                            if (Number(Data.getMinutes()) > Number(time[1])) return false;
+                            else if (Number(Data.getMinutes()) <= Number(time[1])) return true;
+                        }
+                    }
+                }
+            }
         }
     }
 })
