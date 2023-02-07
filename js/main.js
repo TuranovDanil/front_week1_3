@@ -34,6 +34,9 @@ Vue.component('container', {
         if (localStorage.todo3) {
             this.column3 = JSON.parse(localStorage.todo3);
         }
+        if (localStorage.todo4) {
+            this.column4 = JSON.parse(localStorage.todo4);
+        }
         eventBus.$on('card-submitted', createdCard => {
             this.column1.push(createdCard);
             this.save();
@@ -74,22 +77,27 @@ Vue.component('container', {
         eventBus.$on('next-column', (index, id) => {
             if (id === 1) {
                 this.column2.push(this.column1[index]);
-                this.column1.splice(index, 1)
+                this.column1.splice(index, 1);
             } else if (id === 2) {
                 this.column3.push(this.column2[index]);
-                this.column2.splice(index, 1)
+                this.column2.splice(index, 1);
+            } else if (id === 3) {
+                this.column3[index].completed = this.completed(index, id);
+                this.column4.push(this.column3[index]);
+                this.column3.splice(index, 1);
+
             }
             this.save();
         })
         eventBus.$on('previous-column', (index, id) => {
-                this.isReason = true;
-                eventBus.$on('reason-submitted', reason => {
-                    this.column3[index].reason = reason.reason;
-                    this.column2.unshift(this.column3[index]);
-                    this.column3.splice(index, 1);
-                    this.isReason = false;
-                    this.save();
-                });
+            this.isReason = true;
+            eventBus.$on('reason-submitted', reason => {
+                this.column3[index].reason = reason.reason;
+                this.column2.unshift(this.column3[index]);
+                this.column3.splice(index, 1);
+                this.isReason = false;
+                this.save();
+            });
         })
     },
     methods: {
@@ -97,7 +105,21 @@ Vue.component('container', {
             localStorage.todo = JSON.stringify(this.column1);
             localStorage.todo2 = JSON.stringify(this.column2);
             localStorage.todo3 = JSON.stringify(this.column3);
+            localStorage.todo4 = JSON.stringify(this.column4);
         },
+        completed(index, id){
+            let Data = new Date();
+            let date = this.column3[index].deadlineDate.split('-');
+            let time = this.column3[index].deadlineTime.split(':');
+            console.log(date, time)
+            console.log(Data.getFullYear(),Data.getMonth()+1,Data.getDate(),Data.getHours(),Data.getMinutes())
+            if (Data.getFullYear() > date[0]) return false;
+            else if (Data.getMonth()+1 > date[1]) return false;
+            else if (Data.getDate() > date[2]) return false;
+            else if (Data.getHours() > time[0]) return false;
+            else if (Data.getMinutes() > time[1]) return false;
+            else return true;
+        }
     }
 })
 
@@ -153,7 +175,7 @@ Vue.component('edit', {
                     deadlineTime: this.deadlineTime,
                     deadlineDate: this.deadlineDate,
                     editTime: Data.getHours() + ':' + Data.getMinutes(),
-                    editDate: Data.getFullYear() + '-' + Data.getMonth() + '-' + Data.getDate(),
+                    editDate: Data.getFullYear() + '-' + Number(Data.getMonth() + 1) + '-' + Data.getDate(),
                 }
                 eventBus.$emit('edit-submitted', editCard);
             } else {
@@ -215,7 +237,7 @@ Vue.component('create-card', {
                 let Data = new Date()
                 let createdCard = {
                     time: Data.getHours() + ':' + Data.getMinutes(),
-                    date: Data.getFullYear() + '-' + Data.getMonth() + '-' + Data.getDate(),
+                    date: Data.getFullYear() + '-' + Number(Data.getMonth() + 1) + '-' + Data.getDate(),
                     title: this.title,
                     description: this.description,
                     deadlineTime: this.deadlineTime,
@@ -398,6 +420,9 @@ Vue.component('column3', {
         },
         previousColumn(index, id) {
             eventBus.$emit('previous-column', index, id)
+        },
+        nextColumn(index, id) {
+            eventBus.$emit('next-column', index, id)
         }
     },
     template: `
@@ -455,7 +480,7 @@ Vue.component('column4', {
     methods: {},
     template: `
 <div>
-    <div v-for="(card, index) in column" :key="index" class="card">
+    <div v-for="(card, index) in column" :key="index" :class="{completed: card.completed, nocompleted: !card.completed}" class="card" >
         <div class="card_title_block">
             <h2 class="card_title">{{card.title}}</h2>
             <button @click="editCard(index, id)">edit</button>

@@ -35,7 +35,7 @@
 }
 
 .column4 {
-    order: 3;
+    order: 4;
 }
 
 .edit-form{
@@ -71,4 +71,20 @@
 
 .reason-form > p{
     margin-top: 20px;
+}
+
+.completed {
+    border: 3px solid green;
+}
+
+.completed > div{
+    border: 1px solid green;
+}
+
+.nocompleted {
+    border: 3px solid red;
+}
+
+.nocompleted > div{
+    border: 1px solid red;
 }
