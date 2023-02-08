@@ -22,19 +22,19 @@
 
 }
 
-.column1 {
+.planned {
     order: 1;
 }
 
-.column2 {
+.working {
     order: 2;
 }
 
-.column3 {
+.testing {
     order: 3;
 }
 
-.column4 {
+.completed {
     order: 4;
 }
 
@@ -73,19 +73,19 @@
     margin-top: 20px;
 }
 
-.completed {
+.completed_card {
     border: 3px solid green;
 }
 
-.completed > div{
+.completed_card > div{
     border: 1px solid green;
 }
 
-.nocompleted {
+.no_completed_card {
     border: 3px solid red;
 }
 
-.nocompleted > div{
+.no_completed_card > div{
     border: 1px solid red;
 }
 
