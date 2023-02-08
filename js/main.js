@@ -52,14 +52,9 @@ Vue.component('container', {
             })
         })
         eventBus.$on('next-column', (index, idColumn) => {
-            if (idColumn === 2) {
-                this.columns[idColumn][index].completed = this.completed(index, idColumn);
-            }
             this.columns[idColumn + 1].push(this.columns[idColumn][index]);
             this.columns[idColumn].splice(index, 1);
-
             this.save();
-
         })
         eventBus.$on('previous-column', (index, idColumn) => {
             this.isReason = true;
@@ -75,29 +70,6 @@ Vue.component('container', {
     methods: {
         save() {
             localStorage.columns = JSON.stringify(this.columns);
-        }
-        ,
-        completed(index, idColumn) {
-            let Data = new Date();
-            let date = this.columns[idColumn][index].deadlineDate.split('-');
-            let time = this.columns[idColumn][index].deadlineTime.split(':');
-
-            if (Data.getFullYear() > Number(date[0])) return false;
-            if (Data.getFullYear() < Number(date[0])) return true;
-
-            if (Number(Data.getMonth() + 1) > Number(date[1])) return false;
-            if (Number(Data.getMonth() + 1) < Number(date[1])) return true;
-
-            if (Number(Data.getDate()) > Number(date[2])) return false;
-            if (Number(Data.getDate()) < Number(date[2])) return true;
-
-            if (Number(Data.getHours()) > Number(time[0])) return false;
-            if (Number(Data.getHours()) < Number(time[0])) return true;
-
-            if (Number(Data.getMinutes()) > Number(time[1])) return false;
-            if (Number(Data.getMinutes()) <= Number(time[1])) return true;
-
-
         }
     }
 })
@@ -153,7 +125,41 @@ Vue.component('testing', {
             required: true
         },
     },
-    methods: {},
+    mounted() {
+        eventBus.$on('next-column-last', (index, idColumn) => {
+            if (idColumn === 2) {
+                this.column[index].inTime = this.completed(index);
+                this.next(index, idColumn)
+            }
+        })
+    },
+    methods: {
+        next(index, idColumn) {
+            eventBus.$emit('next', index, idColumn)
+        },
+        completed(index) {
+            let Data = new Date();
+            let date = this.column[index].deadlineDate.split('-');
+            let time = this.column[index].deadlineTime.split(':');
+
+            if (Data.getFullYear() > Number(date[0])) return false;
+            if (Data.getFullYear() < Number(date[0])) return true;
+
+            if (Number(Data.getMonth() + 1) > Number(date[1])) return false;
+            if (Number(Data.getMonth() + 1) < Number(date[1])) return true;
+
+            if (Number(Data.getDate()) > Number(date[2])) return false;
+            if (Number(Data.getDate()) < Number(date[2])) return true;
+
+            if (Number(Data.getHours()) > Number(time[0])) return false;
+            if (Number(Data.getHours()) < Number(time[0])) return true;
+
+            if (Number(Data.getMinutes()) > Number(time[1])) return false;
+            if (Number(Data.getMinutes()) <= Number(time[1])) return true;
+
+
+        }
+    },
     template: `
 <div>
     <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" >
@@ -209,10 +215,13 @@ Vue.component('card', {
         },
         nextColumn(index, idColumn) {
             eventBus.$emit('next-column', index, idColumn)
+        },
+        nextColumnLast(index, idColumn) {
+            eventBus.$emit('next-column-last', index, idColumn)
         }
     },
     template: `
-<div :key="index" :class="{completed_card: card.completed, no_completed_card: card.completed == false}">
+<div :key="index" :class="{in_time: card.inTime, not_in_time: card.inTime == false}">
         <div class="card_title_block">
             <h2 class="card_title">{{card.title}}</h2>
             <button v-if="idColumn === 0" @click="delCard(index, idColumn)">delete</button>
@@ -246,7 +255,7 @@ Vue.component('card', {
                 <button @click="previousColumn(index, idColumn)">&#5130</button>
             </div>
             <div class="right_arrow">
-                <button @click="nextColumn(index, idColumn)">&#5125</button>
+                <button @click="nextColumnLast(index, idColumn), nextColumn(index, idColumn)">&#5125</button>
             </div>
         </div>
 </div>

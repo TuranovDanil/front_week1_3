@@ -73,19 +73,19 @@
     margin-top: 20px;
 }
 
-.completed_card {
+.in_time {
     border: 3px solid green;
 }
 
-.completed_card > div{
+.in_time > div{
     border: 1px solid green;
 }
 
-.no_completed_card {
+.not_in_time {
     border: 3px solid red;
 }
 
-.no_completed_card > div{
+.not_in_time > div{
     border: 1px solid red;
 }
 
