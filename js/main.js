@@ -20,30 +20,30 @@ Vue.component('container', {
     <edit v-if="isEdit"></edit>
     <reason v-if="isReason"></reason>
     <div class="container">
-        <column1 class="column column1" :column="columns[0]" :idColumn="0" v-if="!isEdit && !isReason"></column1>
-        <column2 class="column column2" :column="columns[1]" v-if="!isEdit && !isReason"></column2>
-        <column3 class="column column3" :column="columns[2]" v-if="!isEdit && !isReason"></column3>     
-        <column4 class="column column4" :column="columns[3]" v-if="!isEdit && !isReason"></column4>            
+        <planned class="column column1" :column="columns[0]" :idColumn="0" :isEdit="isEdit" v-if="!isEdit && !isReason"></planned>
+        <working class="column column2" :column="columns[1]" :idColumn="1" v-if="!isEdit && !isReason"></working>
+        <testing class="column column3" :column="columns[2]" :idColumn="2" v-if="!isEdit && !isReason"></testing>     
+        <completed class="column column4" :column="columns[3]" :idColumn="3" v-if="!isEdit && !isReason"></completed>            
     </div>
 </div>
     `,
     mounted() {
-        if (localStorage.todo) {
-            this.columns[0] = JSON.parse(localStorage.todo);
+        if (localStorage.planned) {
+            this.columns[0] = JSON.parse(localStorage.planned);
         }
-        if (localStorage.todo2) {
-            this.columns[1] = JSON.parse(localStorage.todo2);
+        if (localStorage.working) {
+            this.columns[1] = JSON.parse(localStorage.working);
         }
-        if (localStorage.todo3) {
-            this.columns[2] = JSON.parse(localStorage.todo3);
+        if (localStorage.testing) {
+            this.columns[2] = JSON.parse(localStorage.testing);
         }
-        if (localStorage.todo4) {
-            this.columns[3] = JSON.parse(localStorage.todo4);
+        if (localStorage.completed) {
+            this.columns[3] = JSON.parse(localStorage.completed);
         }
-        // eventBus.$on('card-submitted', createdCard => {
-        //     this.columns[0].push(createdCard);
-        //     this.save();
-        // })
+        eventBus.$on('card-submitted', createdCard => {
+            this.columns[0].push(createdCard);
+            this.save();
+        })
         // eventBus.$on('del-card', index => {
         //     this.columns[0].splice(index, 1);
         //     this.save();
@@ -61,17 +61,17 @@ Vue.component('container', {
                 this.save();
             })
         })
-        // eventBus.$on('next-column', (index, id) => {
-        //     if (id === 2) {
-        //         this.columns[id][index].completed = this.completed(index, id);
-        //         this.columns[id + 1].push(this.columns[id][index]);
-        //         this.columns[id].splice(index, 1);
-        //     } else {
-        //         this.columns[id + 1].push(this.columns[id][index]);
-        //         this.columns[id].splice(index, 1);
-        //     }
-        //     this.save();
-        // })
+        eventBus.$on('next-column', (index, id) => {
+            if (id === 2) {
+                this.columns[id][index].completed = this.completed(index, id);
+                this.columns[id + 1].push(this.columns[id][index]);
+                this.columns[id].splice(index, 1);
+            } else {
+                this.columns[id + 1].push(this.columns[id][index]);
+                this.columns[id].splice(index, 1);
+            }
+            this.save();
+        })
         // eventBus.$on('previous-column', (index, id) => {
         //     this.isReason = true;
         //     eventBus.$on('reason-submitted', reason => {
@@ -85,10 +85,10 @@ Vue.component('container', {
     },
     methods: {
         save() {
-            localStorage.todo = JSON.stringify(this.columns[0]);
-            localStorage.todo2 = JSON.stringify(this.columns[1]);
-            localStorage.todo3 = JSON.stringify(this.columns[2]);
-            localStorage.todo4 = JSON.stringify(this.columns[3]);
+            localStorage.planned = JSON.stringify(this.columns[0]);
+            localStorage.working = JSON.stringify(this.columns[1]);
+            localStorage.testing = JSON.stringify(this.columns[2]);
+            localStorage.completed = JSON.stringify(this.columns[3]);
         },
         completed(index, id) {
             let Data = new Date();
@@ -115,6 +115,182 @@ Vue.component('container', {
             }
         }
     }
+})
+
+Vue.component('planned', {
+    props: {
+        column: {
+            type: Array,
+            required: true
+        },
+        idColumn:{
+            type: Number,
+            required: true
+        },
+    },
+    mounted() {
+        if (localStorage.planned) {
+            this.column = JSON.parse(localStorage.planned);
+        }
+    },
+    methods: {
+    },
+    template: `
+<div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" >
+</card>
+</div>
+    `
+})
+
+
+Vue.component('working', {
+    props: {
+        column: {
+            type: Array,
+            required: true
+        },
+        idColumn:{
+            type: Number,
+            required: true
+        },
+    },
+    mounted() {
+        if (localStorage.working) {
+            this.column = JSON.parse(localStorage.working);
+        }
+    },
+    methods: {
+    },
+    template: `
+<div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" >
+</card>
+</div>
+    `
+})
+
+Vue.component('testing', {
+    props: {
+        column: {
+            type: Array,
+            required: true
+        },
+        idColumn:{
+            type: Number,
+            required: true
+        },
+    },
+    mounted() {
+        if (localStorage.testing) {
+            this.column = JSON.parse(localStorage.testing);
+        }
+    },
+    methods: {
+    },
+    template: `
+<div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" >
+</card>
+</div>
+    `
+})
+
+Vue.component('completed', {
+    props: {
+        column: {
+            type: Array,
+            required: true
+        },
+        idColumn:{
+            type: Number,
+            required: true
+        },
+    },
+    mounted() {
+        if (localStorage.completed) {
+            this.column = JSON.parse(localStorage.completed);
+        }
+    },
+    methods: {
+    },
+    template: `
+<div>
+    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" >
+</card>
+</div>
+    `
+})
+
+Vue.component('card', {
+    props: {
+        card: {
+            type: Object,
+            required: true
+        },
+        idColumn: {
+            type: Number,
+            required: true
+        },
+        index: {
+            type: Number,
+            required: true
+        }
+    },
+    methods: {
+        delCard(index) {
+            eventBus.$emit('del-card', index);
+        },
+        editCard(index, idColumn) {
+            eventBus.$emit('edit-card', index, idColumn)
+        },
+        previousColumn(index, idColumn) {
+            eventBus.$emit('previous-column', index, idColumn)
+        },
+        nextColumn(index, idColumn) {
+            eventBus.$emit('next-column', index, idColumn)
+        }
+    },
+    template: `
+<div :class="{completed: card.completed, nocompleted: card.completed == false}">
+        <div class="card_title_block">
+            <h2 class="card_title">{{card.title}}</h2>
+            <button v-if="idColumn === 0" @click="delCard(index)">delete</button>
+            <button v-if="idColumn !== 3" @click="editCard(index, idColumn)">edit</button>
+        </div>
+        <div class="card_description"> 
+            <p>description:</p>
+            {{card.description}}
+        </div>
+        <div class="card_data_create">
+            <p>created:</p>
+            <div class="card_time">{{card.time}}</div>
+            <div class="card_date">{{card.date}}</div>
+        </div>
+        <div v-if="card.editTime" class="card_data_edit">
+            <p>edit:</p>
+            <div class="card_edit_time">{{card.editTime}}</div>
+            <div class="card_edit_data">{{card.editDate}}</div>
+        </div>
+        <div v-if="card.reason" class="card_reason">
+            <p>reason:</p>
+            <div class="card_reason">{{card.reason}}</div>
+        </div>
+        <div class="card_deadline">
+            <p>deadline:</p>
+            <div class="card_deadline_time">{{card.deadlineTime}}</div>
+            <div class="card_deadline_data">{{card.deadlineDate}}</div>
+        </div>
+        <div v-if="idColumn !==3" class="move">
+            <div v-if="idColumn ===2" class="left_arrow">
+                <button @click="previousColumn(index, idColumn)">&#5130</button>
+            </div>
+            <div class="right_arrow">
+                <button @click="nextColumn(index, idColumn)">&#5125</button>
+            </div>
+        </div>
+</div>
+    `
 })
 
 Vue.component('reason', {
@@ -268,180 +444,6 @@ Vue.component('create-card', {
         <input type="submit" value="Submit"> 
     </p>
 </form>
-    `
-})
-
-
-Vue.component('column1', {
-    props: {
-        column: {
-            type: Array,
-            required: true
-        },
-        idColumn:{
-            type: Number,
-            required: true
-        },
-
-    },
-    mounted() {
-        if (localStorage.todo) {
-            this.column = JSON.parse(localStorage.todo);
-        }
-        eventBus.$on('card-submitted', createdCard => {
-            this.column.push(createdCard);
-            this.save();
-        });
-        eventBus.$on('del-card', index => {
-            this.column.splice(index, 1);
-            this.save();
-        })
-    },
-    methods: {
-        save() {
-            localStorage.todo = JSON.stringify(this.column);
-        }
-    },
-    template: `
-<div>
-    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" >
-</card>
-</div>
-    `
-})
-
-
-Vue.component('column2', {
-    props: {
-        column: {
-            type: Array,
-            required: true
-        }
-    },
-    data() {
-        return {
-            id: 1
-        }
-    },
-    methods: {},
-    template: `
-<div>
-    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
-</card>
-</div>
-    `
-})
-
-Vue.component('column3', {
-    props: {
-        column: {
-            type: Array,
-            required: true
-        }
-    },
-    data() {
-        return {
-            id: 2
-        }
-    },
-    methods: {},
-    template: `
-<div>
-    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
-</card>
-</div>
-    `
-})
-
-Vue.component('column4', {
-    props: {
-        column: {
-            type: Array,
-            required: true
-        }
-    },
-    data() {
-        return {
-            id: 3
-        }
-    },
-    methods: {},
-    template: `
-<div>
-    <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :id="id" class="card" >
-</card>
-</div>
-    `
-})
-
-Vue.component('card', {
-    props: {
-        card: {
-            type: Object,
-            required: true
-        },
-        idColumn: {
-            type: Number,
-            required: true
-        },
-        index: {
-            type: Number,
-            required: true
-        }
-    },
-    methods: {
-        delCard(index) {
-            eventBus.$emit('del-card', index);
-        },
-        editCard(index, idColumn) {
-            eventBus.$emit('edit-card', index, idColumn)
-        },
-        previousColumn(index, idColumn) {
-            eventBus.$emit('previous-column', index, idColumn)
-        },
-        nextColumn(index, idColumn) {
-            eventBus.$emit('next-column', index, idColumn)
-        }
-    },
-    template: `
-<div :class="{completed: card.completed, nocompleted: card.completed == false}">
-        <div class="card_title_block">
-            <h2 class="card_title">{{card.title}}</h2>
-            <button v-if="idColumn === 0" @click="delCard(index)">delete</button>
-            <button v-if="idColumn !== 3" @click="editCard(index, idColumn)">edit</button>
-        </div>
-        <div class="card_description"> 
-            <p>description:</p>
-            {{card.description}}
-        </div>
-        <div class="card_data_create">
-            <p>created:</p>
-            <div class="card_time">{{card.time}}</div>
-            <div class="card_date">{{card.date}}</div>
-        </div>
-        <div v-if="card.editTime" class="card_data_edit">
-            <p>edit:</p>
-            <div class="card_edit_time">{{card.editTime}}</div>
-            <div class="card_edit_data">{{card.editDate}}</div>
-        </div>
-        <div v-if="card.reason" class="card_reason">
-            <p>reason:</p>
-            <div class="card_reason">{{card.reason}}</div>
-        </div>
-        <div class="card_deadline">
-            <p>deadline:</p>
-            <div class="card_deadline_time">{{card.deadlineTime}}</div>
-            <div class="card_deadline_data">{{card.deadlineDate}}</div>
-        </div>
-        <div v-if="idColumn !==3" class="move">
-            <div v-if="idColumn ===2" class="left_arrow">
-                <button @click="previousColumn(index, idColumn)">&#5130</button>
-            </div>
-            <div class="right_arrow">
-                <button @click="nextColumn(index, idColumn)">&#5125</button>
-            </div>
-        </div>
-</div>
     `
 })
 
