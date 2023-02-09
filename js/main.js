@@ -34,64 +34,64 @@ Vue.component('container', {
             this.columns[0].push(createdCard);
             this.save();
         })
-        eventBus.$on('del-card', (index, idColumn) => {
-            this.columns[idColumn].splice(index, 1);
+        eventBus.$on('del-card', (idCard, idColumn) => {
+            this.columns[idColumn].splice(idCard, 1);
             this.save();
         })
-        eventBus.$on('edit-card', (index, idColumn) => {
+        eventBus.$on('edit-card', (idCard, idColumn) => {
             this.isEdit = true;
             eventBus.$on('edit-submitted', editCard => {
-                if (editCard.title) this.columns[idColumn][index].title = editCard.title;
-                if (editCard.description) this.columns[idColumn][index].description = editCard.description;
-                if (editCard.deadlineTime) this.columns[idColumn][index].deadlineTime = editCard.deadlineTime;
-                if (editCard.deadlineDate) this.columns[idColumn][index].deadlineDate = editCard.deadlineDate;
-                if (editCard.editTime) this.columns[idColumn][index].editTime = editCard.editTime;
-                if (editCard.editDate) this.columns[idColumn][index].editDate = editCard.editDate;
+                if (editCard.title) this.columns[idColumn][idCard].title = editCard.title;
+                if (editCard.description) this.columns[idColumn][idCard].description = editCard.description;
+                if (editCard.deadlineTime) this.columns[idColumn][idCard].deadlineTime = editCard.deadlineTime;
+                if (editCard.deadlineDate) this.columns[idColumn][idCard].deadlineDate = editCard.deadlineDate;
+                if (editCard.editTime) this.columns[idColumn][idCard].editTime = editCard.editTime;
+                if (editCard.editDate) this.columns[idColumn][idCard].editDate = editCard.editDate;
                 this.isEdit = false;
                 this.save();
             })
         })
-        eventBus.$on('next-column', (index, idColumn) => {
-            this.columns[idColumn + 1].push(this.columns[idColumn][index]);
-            this.columns[idColumn].splice(index, 1);
+        eventBus.$on('next-column', (idCard, idColumn) => {
+            this.columns[idColumn + 1].push(this.columns[idColumn][idCard]);
+            this.columns[idColumn].splice(idCard, 1);
             this.save();
         })
-        eventBus.$on('previous-column', (index, idColumn) => {
+        eventBus.$on('previous-column', (idCard, idColumn) => {
             this.isReason = true;
             eventBus.$on('reason-submitted', reason => {
-                this.columns[idColumn][index].reason = reason.reason;
-                this.columns[idColumn - 1].unshift(this.columns[idColumn][index]);
-                this.columns[idColumn].splice(index, 1);
+                this.columns[idColumn][idCard].reason = reason.reason;
+                this.columns[idColumn - 1].unshift(this.columns[idColumn][idCard]);
+                this.columns[idColumn].splice(idCard, 1);
                 this.isReason = false;
                 this.save();
             });
         })
 
 
-        const main = document.querySelector(".container");
+        const container = document.querySelector(".container");
         let idCard;
-        let idCol;
-        main.addEventListener("dragstart", (e) => {
+        let idColumn;
+        container.addEventListener("dragstart", (e) => {
             if (e.target.classList.contains("card")) {
                 idCard = e.target.dataset.id;
-                idCol = Number(e.target.dataset.column);
+                idColumn = Number(e.target.dataset.column);
             }
         });
         let targetColumn;
-        main.addEventListener("dragover", (e) => {
+        container.addEventListener("dragover", (e) => {
             e.preventDefault();
         });
-        main.addEventListener("drop", (e) => {
+        container.addEventListener("drop", (e) => {
             targetColumn = e.target;
             while (!targetColumn.classList.contains("column")) {
                 targetColumn = targetColumn.parentElement;
             }
-            if (Number(targetColumn.dataset.column) === idCol + 1) {
-                this.nextColumnLast(idCard, idCol)
-                this.nextColumn(idCard, idCol)
+            if (Number(targetColumn.dataset.column) === idColumn + 1) {
+                this.nextColumnLast(idCard, idColumn)
+                this.nextColumn(idCard, idColumn)
             }
-            if (Number(targetColumn.dataset.column) === idCol - 1 && idCol === 2) {
-                this.previousColumn(idCard, idCol)
+            if (Number(targetColumn.dataset.column) === idColumn - 1 && idColumn === 2) {
+                this.previousColumn(idCard, idColumn)
             }
             this.save();
         })
@@ -101,14 +101,14 @@ Vue.component('container', {
         save() {
             localStorage.columns = JSON.stringify(this.columns);
         },
-        nextColumn(index, idColumn) {
-            eventBus.$emit('next-column', index, idColumn)
+        nextColumn(idCard, idColumn) {
+            eventBus.$emit('next-column', idCard, idColumn)
         },
-        nextColumnLast(index, idColumn) {
-            eventBus.$emit('next-column-last', index, idColumn)
+        nextColumnLast(idCard, idColumn) {
+            eventBus.$emit('next-column-last', idCard, idColumn)
         },
-        previousColumn(index, idColumn) {
-            eventBus.$emit('previous-column', index, idColumn)
+        previousColumn(idCard, idColumn) {
+            eventBus.$emit('previous-column', idCard, idColumn)
         },
     }
 })
@@ -129,17 +129,12 @@ Vue.component('planned', {
         },
     },
     mounted() {
-
     },
-    methods: {
-        nextColumn(index, idColumn) {
-            eventBus.$emit('next-column', index, idColumn)
-        },
-    },
+    methods: {},
     template: `
 <div>
     <div>
-        <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" ></card>
+        <card v-for="(card, idCard) in column" :key="idCard" :idCard="idCard" :card="card" :idColumn="idColumn" class="card" ></card>
     </div>
 </div>
     `
@@ -163,15 +158,11 @@ Vue.component('working', {
     mounted() {
 
     },
-    methods: {
-        nextColumn(index, idColumn) {
-            eventBus.$emit('next-column', index, idColumn)
-        },
-    },
+    methods: {},
     template: `
 <div>
     <div >
-        <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" ></card>
+        <card v-for="(card, idCard) in column" :key="idCard" :idCard="idCard" :card="card" :idColumn="idColumn" class="card" ></card>
     </div>
 </div>
     `
@@ -193,20 +184,17 @@ Vue.component('testing', {
         },
     },
     mounted() {
-        eventBus.$on('next-column-last', (index, idColumn) => {
+        eventBus.$on('next-column-last', (idCard, idColumn) => {
             if (idColumn === 2) {
-                this.column[index].inTime = this.completedDate(index);
+                this.column[idCard].inTime = this.completedDate(idCard);
             }
         })
     },
     methods: {
-        nextColumn(index, idColumn) {
-            eventBus.$emit('next-column', index, idColumn)
-        },
-        completedDate(index) {
+        completedDate(idCard) {
             let Data = new Date();
-            let date = this.column[index].deadlineDate.split('-');
-            let time = this.column[index].deadlineTime.split(':');
+            let date = this.column[idCard].deadlineDate.split('-');
+            let time = this.column[idCard].deadlineTime.split(':');
 
             if (Data.getFullYear() > Number(date[0])) return false;
             if (Data.getFullYear() < Number(date[0])) return true;
@@ -227,7 +215,7 @@ Vue.component('testing', {
     template: `
 <div>
     <div>
-        <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" ></card>
+        <card v-for="(card, idCard) in column" :key="idCard" :idCard="idCard" :card="card" :idColumn="idColumn" class="card" ></card>
     </div>
 </div>
     `
@@ -248,7 +236,7 @@ Vue.component('completed', {
     template: `
 <div>
     <div>
-        <card v-for="(card, index) in column" :key="index" :index="index" :card="card" :idColumn="idColumn" class="card" ></card>
+        <card v-for="(card, idCard) in column" :key="idCard" :idCard="idCard" :card="card" :idColumn="idColumn" class="card" ></card>
     </div>
 </div>
     `
@@ -265,34 +253,34 @@ Vue.component('card', {
             type: Number,
             required: true
         },
-        index: {
+        idCard: {
             type: Number,
             required: true
         }
     },
     methods: {
-        delCard(index, idColumn) {
-            eventBus.$emit('del-card', index, idColumn);
+        delCard(idCard, idColumn) {
+            eventBus.$emit('del-card', idCard, idColumn);
         },
-        editCard(index, idColumn) {
-            eventBus.$emit('edit-card', index, idColumn)
+        editCard(idCard, idColumn) {
+            eventBus.$emit('edit-card', idCard, idColumn)
         },
-        previousColumn(index, idColumn) {
-            eventBus.$emit('previous-column', index, idColumn)
+        previousColumn(idCard, idColumn) {
+            eventBus.$emit('previous-column', idCard, idColumn)
         },
-        nextColumn(index, idColumn) {
-            eventBus.$emit('next-column', index, idColumn)
+        nextColumn(idCard, idColumn) {
+            eventBus.$emit('next-column', idCard, idColumn)
         },
-        nextColumnLast(index, idColumn) {
-            eventBus.$emit('next-column-last', index, idColumn)
+        nextColumnLast(idCard, idColumn) {
+            eventBus.$emit('next-column-last', idCard, idColumn)
         }
     },
     template: `
-<div :key="index" :class="{in_time: card.inTime, not_in_time: card.inTime == false}" draggable="true" :data-id="index" :data-column="idColumn">
+<div :key="idCard" :class="{in_time: card.inTime, not_in_time: card.inTime == false}" draggable="true" :data-id="idCard" :data-column="idColumn">
         <div class="in-card">
             <h2 class="card_title">{{card.title}}</h2>
-            <button v-if="idColumn === 0" @click="delCard(index, idColumn)">delete</button>
-            <button v-if="idColumn !== 3" @click="editCard(index, idColumn)">edit</button>
+            <button v-if="idColumn === 0" @click="delCard(idCard, idColumn)">delete</button>
+            <button v-if="idColumn !== 3" @click="editCard(idCard, idColumn)">edit</button>
         </div>
         <div class="in-card"> 
             <p>description:</p>
@@ -318,8 +306,8 @@ Vue.component('card', {
             <p class="card_deadline_data">{{card.deadlineDate}}</p>
         </div>
         <div v-if="idColumn !==3" class="in-card">
-            <button v-if="idColumn ===2" class="left_arrow" @click="previousColumn(index, idColumn)">&#5130</button>
-            <button class="right_arrow" @click="nextColumnLast(index, idColumn), nextColumn(index, idColumn)">&#5125</button>
+            <button v-if="idColumn ===2" class="left_arrow" @click="previousColumn(idCard, idColumn)">&#5130</button>
+            <button class="right_arrow" @click="nextColumnLast(idCard, idColumn), nextColumn(idCard, idColumn)">&#5125</button>
         </div>
 </div>
     `
