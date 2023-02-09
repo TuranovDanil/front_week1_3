@@ -12,31 +12,32 @@
     padding-top: 40px;
 }
 
-.column {
+.container > div {
     display: flex;
     flex-direction: column;
     padding: 20px;
     border: black 4px solid;
     border-radius: 20px;
-    min-width: 100px;
+    min-width: 230px;
+    min-height: 300px;
 
 }
 
-.planned {
-    order: 1;
-}
+/*.planned {*/
+/*    order: 1;*/
+/*}*/
 
-.working {
-    order: 2;
-}
+/*.working {*/
+/*    order: 2;*/
+/*}*/
 
-.testing {
-    order: 3;
-}
+/*.testing {*/
+/*    order: 3;*/
+/*}*/
 
-.completed {
-    order: 4;
-}
+/*.completed {*/
+/*    order: 4;*/
+/*}*/
 
 .edit-form{
     margin: 200px;
@@ -58,6 +59,9 @@
 .card{
     min-width: 200px;
     margin-bottom: 10px;
+    cursor: move;
+    padding: 20px;
+    border: 3px solid blueviolet;
 }
 
 .card > div{
@@ -93,4 +97,9 @@
     display: flex;
     justify-content: space-between;
 }
+
+.drop {
+    background: linear-gradient(#eee, transparent);
+}
+
 
