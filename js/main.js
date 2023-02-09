@@ -19,10 +19,10 @@ Vue.component('container', {
     <edit v-if="isEdit"></edit>
     <reason v-if="isReason"></reason>
     <div class="container">
-        <planned class="planned" :columns="columns" :column="columns[0]" :idColumn="0" v-if="!isEdit && !isReason"></planned>
-        <working class="working" :columns="columns" :column="columns[1]" :idColumn="1" v-if="!isEdit && !isReason"></working>
-        <testing class="testing" :columns="columns" :column="columns[2]" :idColumn="2" v-if="!isEdit && !isReason"></testing>     
-        <completed class="completed" :column="columns[3]" :idColumn="3" v-if="!isEdit && !isReason"></completed>            
+        <planned class="column" :columns="columns" :column="columns[0]" :idColumn="0" data-column="0" v-if="!isEdit && !isReason"></planned>
+        <working class="column" :columns="columns" :column="columns[1]" :idColumn="1" data-column="1" v-if="!isEdit && !isReason"></working>
+        <testing class="column" :columns="columns" :column="columns[2]" :idColumn="2" data-column="2" v-if="!isEdit && !isReason"></testing>     
+        <completed class="column" :column="columns[3]" :idColumn="3" data-column="3" v-if="!isEdit && !isReason"></completed>            
     </div>
 </div>
     `,
@@ -68,11 +68,48 @@ Vue.component('container', {
         })
 
 
+        const main = document.querySelector(".container");
+        let idCard;
+        let idCol;
+        main.addEventListener("dragstart", (e) => {
+            if (e.target.classList.contains("card")) {
+                idCard = e.target.dataset.id;
+                idCol = Number(e.target.dataset.column);
+            }
+        });
+        let targetColumn;
+        main.addEventListener("dragover", (e) => {
+            e.preventDefault();
+        });
+        main.addEventListener("drop", (e) => {
+            targetColumn = e.target;
+            while (!targetColumn.classList.contains("column")) {
+                targetColumn = targetColumn.parentElement;
+            }
+            if (Number(targetColumn.dataset.column) === idCol + 1) {
+                if (idCol === 2) {
+                    this.nextColumnLast(idCard, idCol)
+                }
+                this.columns[idCol + 1].push(this.columns[idCol][idCard]);
+                this.columns[idCol].splice(idCard, 1);
+            }
+            if (Number(targetColumn.dataset.column) === idCol - 1 && idCol === 2) {
+                this.previousColumn(idCard, idCol)
+            }
+            this.save();
+        })
+
     },
     methods: {
         save() {
             localStorage.columns = JSON.stringify(this.columns);
-        }
+        },
+        nextColumnLast(index, idColumn) {
+            eventBus.$emit('next-column-last', index, idColumn)
+        },
+        previousColumn(index, idColumn) {
+            eventBus.$emit('previous-column', index, idColumn)
+        },
     }
 })
 
@@ -92,27 +129,7 @@ Vue.component('planned', {
         },
     },
     mounted() {
-        const main = document.querySelector(".container");
-        let idCard;
-        main.addEventListener("dragstart", (e) => {
-            if (e.target.classList.contains("card")) {
-                idCard = e.target.dataset.id;
-            }
-        });
-        let targetColumn;
-        main.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            targetColumn = e.target;
-            while (!targetColumn.classList.contains("working")) {
-                targetColumn = targetColumn.parentElement;
-            }
-        });
-        main.addEventListener("drop", (e) => {
-            if (targetColumn.classList.contains("working")) {
-                this.nextColumn(idCard, this.idColumn)
-                localStorage.columns = JSON.stringify(this.columns);
-            }
-        })
+
     },
     methods: {
         nextColumn(index, idColumn) {
@@ -144,27 +161,7 @@ Vue.component('working', {
         },
     },
     mounted() {
-        const main = document.querySelector(".container");
-        let idCard;
-        main.addEventListener("dragstart", (e) => {
-            if (e.target.classList.contains("card")) {
-                idCard = e.target.dataset.id;
-            }
-        });
-        let targetColumn;
-        main.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            targetColumn = e.target;
-            while (!targetColumn.classList.contains("testing")) {
-                targetColumn = targetColumn.parentElement;
-            }
-        });
-        main.addEventListener("drop", (e) => {
-            if (targetColumn.classList.contains("testing")) {
-                this.nextColumn(idCard, this.idColumn)
-                localStorage.columns = JSON.stringify(this.columns);
-            }
-        })
+
     },
     methods: {
         nextColumn(index, idColumn) {
@@ -199,49 +196,13 @@ Vue.component('testing', {
         eventBus.$on('next-column-last', (index, idColumn) => {
             if (idColumn === 2) {
                 this.column[index].inTime = this.completedDate(index);
-                // this.next(index, idColumn)
             }
-        })
-
-        const main = document.querySelector(".container");
-        let idCard;
-        main.addEventListener("dragstart", (e) => {
-            if (e.target.classList.contains("card")) {
-                idCard = e.target.dataset.id;
-            }
-        });
-        let targetColumnNext;
-        // let targetColumnPrevious;
-        main.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            targetColumnNext = e.target;
-            // targetColumnPrevious = e.target;
-            while (!targetColumnNext.classList.contains("completed")) {
-                targetColumnNext = targetColumnNext.parentElement;
-            }
-            // while (!targetColumnPrevious.classList.contains("working")) {
-            //     targetColumnPrevious = targetColumnPrevious.parentElement;
-            // }
-        });
-        main.addEventListener("drop", (e) => {
-            if (targetColumnNext.classList.contains("completed")) {
-                this.column[idCard].inTime = this.completedDate(idCard);
-                this.columns[this.idColumn + 1].push(this.column[idCard]);
-                this.column.splice(idCard, 1);
-                localStorage.columns = JSON.stringify(this.columns);
-            }
-            // if (targetColumnPrevious.classList.contains("working")) {
-            //     this.columns[this.idColumn - 1].push(this.column[idCard]);
-            //     this.column.splice(idCard, 1);
-            //     localStorage.columns = JSON.stringify(this.columns);
-            // }
-
         })
     },
     methods: {
-        // nextColumn(index, idColumn) {
-        //     eventBus.$emit('next', index, idColumn)
-        // },
+        nextColumn(index, idColumn) {
+            eventBus.$emit('next-column', index, idColumn)
+        },
         completedDate(index) {
             let Data = new Date();
             let date = this.column[index].deadlineDate.split('-');
@@ -327,7 +288,7 @@ Vue.component('card', {
         }
     },
     template: `
-<div :key="index" :class="{in_time: card.inTime, not_in_time: card.inTime == false}" draggable="true" :data-id="index">
+<div :key="index" :class="{in_time: card.inTime, not_in_time: card.inTime == false}" draggable="true" :data-id="index" :data-column="idColumn">
         <div class="in-card">
             <h2 class="card_title">{{card.title}}</h2>
             <button v-if="idColumn === 0" @click="delCard(index, idColumn)">delete</button>
