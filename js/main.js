@@ -87,11 +87,8 @@ Vue.component('container', {
                 targetColumn = targetColumn.parentElement;
             }
             if (Number(targetColumn.dataset.column) === idCol + 1) {
-                if (idCol === 2) {
-                    this.nextColumnLast(idCard, idCol)
-                }
-                this.columns[idCol + 1].push(this.columns[idCol][idCard]);
-                this.columns[idCol].splice(idCard, 1);
+                this.nextColumnLast(idCard, idCol)
+                this.nextColumn(idCard, idCol)
             }
             if (Number(targetColumn.dataset.column) === idCol - 1 && idCol === 2) {
                 this.previousColumn(idCard, idCol)
@@ -103,6 +100,9 @@ Vue.component('container', {
     methods: {
         save() {
             localStorage.columns = JSON.stringify(this.columns);
+        },
+        nextColumn(index, idColumn) {
+            eventBus.$emit('next-column', index, idColumn)
         },
         nextColumnLast(index, idColumn) {
             eventBus.$emit('next-column-last', index, idColumn)
